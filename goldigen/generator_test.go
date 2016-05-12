@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/fgrosse/goldi/goldigen"
+	"github.com/lmroz/goldi/goldigen"
 )
 
 var _ = Describe("Generator", func() {
@@ -93,7 +93,7 @@ var _ = Describe("Generator", func() {
 		})
 
 		It("should import the goldi package", func() {
-			Expect(output).To(ImportPackage("github.com/fgrosse/goldi"))
+			Expect(output).To(ImportPackage("github.com/lmroz/goldi"))
 		})
 
 		It("should import the type packages", func() {

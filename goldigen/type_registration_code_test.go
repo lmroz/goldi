@@ -4,7 +4,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"github.com/fgrosse/goldi/goldigen"
+	"github.com/lmroz/goldi/goldigen"
 )
 
 var _ = Describe("FactoryCode", func() {

@@ -4,7 +4,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"github.com/fgrosse/goldi/goldigen"
+	"github.com/lmroz/goldi/goldigen"
 )
 
 var _ = Describe("TypesConfiguration", func() {
@@ -140,14 +140,14 @@ var _ = Describe("TypesConfiguration", func() {
 				c := main.TypesConfiguration{
 					Types: map[string]main.TypeDefinition{
 						"some_goldi_type": {
-							Package: "github.com/fgrosse/goldi",
+							Package: "github.com/lmroz/goldi",
 						},
 					},
 				}
 
-				packages := c.Packages("github.com/fgrosse/goldi")
+				packages := c.Packages("github.com/lmroz/goldi")
 				Expect(packages).To(HaveLen(1))
-				Expect(packages).To(ContainElement("github.com/fgrosse/goldi"))
+				Expect(packages).To(ContainElement("github.com/lmroz/goldi"))
 			})
 		})
 	})

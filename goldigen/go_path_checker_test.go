@@ -6,7 +6,7 @@ import (
 
 	"os"
 
-	"github.com/fgrosse/goldi/goldigen"
+	"github.com/lmroz/goldi/goldigen"
 )
 
 var _ = Describe("GoPathChecker", func() {
@@ -57,22 +57,22 @@ var _ = Describe("GoPathChecker", func() {
 
 			It("should return the correct package name", func() {
 				checker := main.NewGoPathChecker(verbose)
-				Expect(checker.PackageName("some_file.go")).To(Equal("github.com/fgrosse/goldi/goldigen"))
+				Expect(checker.PackageName("some_file.go")).To(Equal("github.com/lmroz/goldi/goldigen"))
 			})
 
 			It("should return the correct package name when navigating up the file tree", func() {
 				checker := main.NewGoPathChecker(verbose)
-				Expect(checker.PackageName("../some_file.go")).To(Equal("github.com/fgrosse/goldi"))
+				Expect(checker.PackageName("../some_file.go")).To(Equal("github.com/lmroz/goldi"))
 			})
 
 			It("should return the correct package name when navigating up and down the file tree", func() {
 				checker := main.NewGoPathChecker(verbose)
-				Expect(checker.PackageName("../goldigen/some_file.go")).To(Equal("github.com/fgrosse/goldi/goldigen"))
+				Expect(checker.PackageName("../goldigen/some_file.go")).To(Equal("github.com/lmroz/goldi/goldigen"))
 			})
 
 			It("should return the correct package name when navigating into different directories of the file tree", func() {
 				checker := main.NewGoPathChecker(verbose)
-				Expect(checker.PackageName("../some_dir/some_file.go")).To(Equal("github.com/fgrosse/goldi/some_dir"))
+				Expect(checker.PackageName("../some_dir/some_file.go")).To(Equal("github.com/lmroz/goldi/some_dir"))
 			})
 		})
 	})

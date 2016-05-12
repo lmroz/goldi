@@ -4,8 +4,8 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"github.com/fgrosse/goldi"
-	"github.com/fgrosse/goldi/validation"
+	"github.com/lmroz/goldi"
+	"github.com/lmroz/goldi/validation"
 )
 
 var _ = Describe("ContainerValidator", func() {

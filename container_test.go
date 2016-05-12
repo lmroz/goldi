@@ -5,7 +5,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	"fmt"
-	"github.com/fgrosse/goldi"
+	"github.com/lmroz/goldi"
 )
 
 func ExampleContainer() {
