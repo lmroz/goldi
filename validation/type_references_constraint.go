@@ -3,14 +3,15 @@ package validation
 import (
 	"fmt"
 
-	"github.com/lmroz/goldi"
 	"github.com/fgrosse/gotility"
+	"github.com/lmroz/goldi"
 )
 
 // The TypeReferencesConstraint is used in a ContainerValidator to check if all referenced types in the container have been defined.
 type TypeReferencesConstraint struct {
-	checkedTypes               gotility.StringSet
-	circularDependencyCheckMap gotility.StringSet
+	checkedTypes                 gotility.StringSet
+	circularDependencyCheckMap   gotility.StringSet
+	checkedForCircularDependency gotility.StringSet
 }
 
 // Validate implements the Constraint interface by checking if all referenced types have been defined.
@@ -42,6 +43,7 @@ func (c *TypeReferencesConstraint) validateTypeReferences(typeID string, contain
 		}
 
 		c.circularDependencyCheckMap = gotility.StringSet{}
+		c.checkedForCircularDependency = gotility.StringSet{}
 		c.circularDependencyCheckMap.Set(typeID)
 		if err = c.checkCircularDependency(referencedTypeFactory, referencedTypeID, container); err != nil {
 			return err
@@ -77,6 +79,9 @@ func (c *TypeReferencesConstraint) checkCircularDependency(typeFactory goldi.Typ
 	typeRefParameters := c.typeReferenceArguments(allArguments)
 
 	for _, referencedTypeID := range typeRefParameters {
+		if c.checkedForCircularDependency.Contains(referencedTypeID) {
+			continue
+		}
 		referencedType, err := c.checkTypeIsDefined(goldi.NewTypeID(typeID).ID, goldi.NewTypeID(referencedTypeID).ID, container)
 		if err != nil {
 			// TEST: test this for improved code coverage
@@ -91,6 +96,12 @@ func (c *TypeReferencesConstraint) checkCircularDependency(typeFactory goldi.Typ
 		if err = c.checkCircularDependency(referencedType, referencedTypeID, container); err != nil {
 			return err
 		}
+
+		// we can safely delete, because if it was in set already this function would have returned error
+		c.circularDependencyCheckMap.Delete(referencedTypeID)
+
+		// type is ok, no need to check it again
+		c.checkedForCircularDependency.Set(referencedTypeID)
 	}
 
 	return nil
