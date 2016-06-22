@@ -5,6 +5,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	"fmt"
+
 	"github.com/lmroz/goldi"
 )
 
@@ -215,6 +216,28 @@ var _ = Describe("type", func() {
 					Expect(err).NotTo(HaveOccurred())
 					Expect(generatedType).To(BeAssignableToTypeOf(NewMockType()))
 					Expect(generatedType.(*MockType).StringParameter).To(Equal("Success! Success! "))
+				})
+			})
+
+			Context("when a func reference type (possibly returning error, but not in this case) is given", func() {
+				It("should generate the type", func() {
+					typeDef := goldi.NewType(NewMockTypeWithError, false, "Success! YEAH")
+
+					generatedType, err := typeDef.Generate(resolver)
+					Expect(err).NotTo(HaveOccurred())
+					Expect(generatedType).To(BeAssignableToTypeOf(NewMockType()))
+					Expect(generatedType.(*MockType).StringParameter).To(Equal("Success! YEAH"))
+				})
+			})
+
+			Context("when a func reference type (possibly returning error) is given", func() {
+				It("should not generate the type and return error", func() {
+					typeDef := goldi.NewType(NewMockTypeWithError, true, "Success! YEAH")
+
+					generatedType, err := typeDef.Generate(resolver)
+					Expect(err).To(HaveOccurred())
+					Expect(generatedType).To(BeAssignableToTypeOf(NewMockType()))
+					Expect(generatedType).To(BeNil())
 				})
 			})
 		})

@@ -19,8 +19,9 @@ type typeFactory struct {
 //
 // This function will return an invalid type if:
 //   - the factoryFunction is nil or no function,
-//   - the factoryFunction returns zero or more than one parameter
-//   - the factoryFunctions return parameter is no pointer, interface  or function type.
+//   - the factoryFunction returns zero or more than two parameters
+//   - the factoryFunctions 1st return parameter is no pointer, interface  or function type.
+//   - the factoryFunctions 2nd return parameter if given does not implement error type.
 //   - the number of given factoryParameters does not match the number of arguments of the factoryFunction
 //
 // Goldigen yaml syntax example:
@@ -46,8 +47,16 @@ func NewType(factoryFunction interface{}, factoryParameters ...interface{}) Type
 }
 
 func newTypeFromFactoryFunction(function interface{}, factoryType reflect.Type, parameters []interface{}) TypeFactory {
-	if factoryType.NumOut() != 1 {
+	//TEST: this requires some test coverage
+	if factoryType.NumOut() != 1 && factoryType.NumOut() != 2 {
 		return newInvalidType(fmt.Errorf("invalid number of return parameters: %d", factoryType.NumOut()))
+	}
+
+	if factoryType.NumOut() == 2 {
+		if !factoryType.Out(1).Implements(reflect.TypeOf((*error)(nil)).Elem()) {
+			return newInvalidType(fmt.Errorf("invalid return parameter type: expected 2nd to implement error"))
+		}
+
 	}
 
 	kindOfGeneratedType := factoryType.Out(0).Kind()
@@ -126,7 +135,16 @@ func (t *typeFactory) Generate(resolver *ParameterResolver) (interface{}, error)
 		result = t.factory.Call(args)
 	}
 
-	// we check the number of return arguments in NewType so there is always exactly one result
+	//TEST: cover possibility of constructor returning error
+	// if factory returned 2 values second is error, no
+	// need to cover other cases because it's handled elsewhere
+	if len(result) == 2 {
+		err := result[1].Interface()
+		if err != nil {
+			// error is properly decorated elsewhere
+			return result[0].Interface(), err.(error)
+		}
+	}
 	return result[0].Interface(), nil
 }
 

@@ -4,6 +4,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
+	"errors"
 	"strings"
 	"testing"
 )
@@ -55,6 +56,13 @@ func (t *MockType) ReturnString(suffix string) string {
 
 func NewMockType() *MockType {
 	return &MockType{}
+}
+
+func NewMockTypeWithError(err bool, stringParameter string) (*MockType, error) {
+	if err {
+		return nil, errors.New("error!")
+	}
+	return &MockType{StringParameter: stringParameter}, nil
 }
 
 func NewMockTypeWithArgs(stringParameter string, boolParameter bool) *MockType {
